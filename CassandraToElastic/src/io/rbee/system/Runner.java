@@ -24,6 +24,11 @@ import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 
+/**
+ * Class which performs the transfer between the Cassndra Cluster and the Elastic Cluster
+ * @author Sven Ulrich
+ *
+ */
 public class Runner
 {
 	/** Fields **/

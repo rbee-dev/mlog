@@ -16,6 +16,11 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.policies.DowngradingConsistencyRetryPolicy;
 
+/**
+ * Database Connection class which wraps calls to the Datastax Driver
+ * @author Sven Ulrich
+ *
+ */
 public class Database
 {
 	/** Fields **/
@@ -49,6 +54,8 @@ public class Database
 		this.contactPoints = contactPoints;
 		connect();
 	}
+	
+	/** private **/
 	
 	/**
 	 * initializes the default settings
@@ -230,6 +237,7 @@ public class Database
 		return connected;
 	}
 
+	/** public **/
 
 	/**
 	 * Closes all open connections to the database
@@ -240,7 +248,12 @@ public class Database
 		close();
 	}
 	
-	
+	/**
+	 * Returns the information of the Table if found inside the Cassandra cluster
+	 * @param tablename
+	 * @return
+	 * @throws Exception
+	 */
 	public Table getTableInformation(String tablename) throws Exception
 	{
 		if (!this.connected)
@@ -312,11 +325,28 @@ public class Database
 		}
 	}
 	
+	/**
+	 * Select data form the Cassandra cluster
+	 * @param fields
+	 * @param table
+	 * @param whereClause
+	 * @return
+	 * @throws Exception
+	 */
 	public ResultSet select(String fields, String table, String whereClause) throws Exception
 	{
 		return select(fields, ";", table, whereClause);
 	}
 	
+	/**
+	 * Select data form the Cassandra cluster
+	 * @param fields
+	 * @param delimiter
+	 * @param table
+	 * @param whereClause
+	 * @return
+	 * @throws Exception
+	 */
 	public ResultSet select(String fields, String delimiter, String table, String whereClause) throws Exception
 	{
 		String[] array 		= fields.split(delimiter);
@@ -325,6 +355,14 @@ public class Database
 		return select(list, table, whereClause);
 	}
 	
+	/**
+	 * Select data form the Cassandra cluster
+	 * @param fields
+	 * @param table
+	 * @param whereClause
+	 * @return
+	 * @throws Exception
+	 */
 	public ResultSet select(List<String> fields, String table, String whereClause) throws Exception
 	{
 		String statement = "select ";

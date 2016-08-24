@@ -15,27 +15,51 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
+/**
+ * Connection Class which wraps the Elasticsearch API
+ * @author Sven Ulrich
+ *
+ */
 public class Node
 {
+	/** Fields **/
 	private Client client;
 	private String ip;
 	
+	/** Constructor **/
+	
+	/**
+	 * Creates a new instance of this class
+	 */
 	public Node()
 	{
 		/** EMPTY **/
 	}
 	
+	/**
+	 * Creates a new instance of this class
+	 * @param ip
+	 */
 	public Node(String ip)
 	{
 		setIp(ip);
 		connect();
 	}
 	
+	/**
+	 * Creates a BulkProcessor with default settings
+	 * @return
+	 */
 	private BulkProcessor getBulkProcessor()
 	{
 		return getBulkProcessor(1000); //default value of elastic api
 	}
 	
+	/**
+	 * Creates a BulkProcessor
+	 * @param bulkSize
+	 * @return
+	 */
 	private BulkProcessor getBulkProcessor(int bulkSize)
 	{
 		BulkProcessor bulkProcessor = BulkProcessor.builder(client, new Listener() {
@@ -66,16 +90,23 @@ public class Node
 		return bulkProcessor;
 	}
 	
+	/** Setter **/
+	
 	public void setIp(String ip)
 	{
 		this.ip = ip;
 	}
 
+	/** Getter **/
+	
 	public String getIp()
 	{
 		return ip;
 	}
 	
+	/**
+	 * Connects to the Elastic Cluster
+	 */
 	public void connect()
 	{
 		if (ip != null && !ip.isEmpty())
@@ -91,6 +122,15 @@ public class Node
 		}
 	}
 	
+	/**
+	 * Sends an index request to the Elastic Cluster
+	 * @param index
+	 * @param type
+	 * @param id
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
 	public boolean index(String index, String type, String id, Map<String, Object> value) throws Exception
 	{
 		if (client == null)
@@ -101,6 +141,14 @@ public class Node
 		return response.isCreated();
 	}
 	
+	/**
+	 * Sends an bulk index request to the Elastic Cluster
+	 * @param index
+	 * @param type
+	 * @param data
+	 * @param bulkSize
+	 * @throws Exception
+	 */
 	public void bulkIndex(String index, String type, List<Map<String,Object>> data, int bulkSize) throws Exception
 	{
 		if (client == null)
@@ -117,6 +165,13 @@ public class Node
 		bulkProcessor.close();
 	}
 	
+	/**
+	 * Sends an bulk index request to the Elastic Cluster
+	 * @param index
+	 * @param type
+	 * @param data
+	 * @throws Exception
+	 */
 	public void bulkIndex(String index, String type, List<Map<String,Object>> data) throws Exception
 	{
 		if (client == null)
@@ -133,6 +188,9 @@ public class Node
 		bulkProcessor.close();
 	}
 	
+	/**
+	 * Closes the connection to the Elastic Cluster
+	 */
 	public void close()
 	{
 		if (client != null)

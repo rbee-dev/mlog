@@ -7,6 +7,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Helper class to Transform different data
+ * @author Sven Ulrich
+ *
+ */
 public class Transformer
 {
 	private static final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
