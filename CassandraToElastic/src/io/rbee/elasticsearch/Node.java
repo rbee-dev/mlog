@@ -84,7 +84,7 @@ public class Node
 			}
 		})
 		.setBulkActions(bulkSize)
-		.setConcurrentRequests(1)
+		.setConcurrentRequests(2)
 		.build();
 		
 		return bulkProcessor;
@@ -158,7 +158,7 @@ public class Node
 		BulkProcessor bulkProcessor = getBulkProcessor(bulkSize);
 		
 		for (Map<String, Object> value : data)
-		{			
+		{									
 			bulkProcessor.add(new IndexRequest(index, type).source(value));
 		}
 		

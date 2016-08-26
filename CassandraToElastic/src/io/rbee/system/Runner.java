@@ -1,5 +1,12 @@
 package io.rbee.system;
 
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -15,14 +22,6 @@ import io.rbee.cassandra.Database;
 import io.rbee.cassandra.Table;
 import io.rbee.elasticsearch.Node;
 import io.rbee.helper.Transformer;
-
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.cli.CommandLine;
 
 /**
  * Class which performs the transfer between the Cassndra Cluster and the Elastic Cluster
@@ -184,7 +183,7 @@ public class Runner
 			String keyspace		 = line.getOptionValue('k');			
 			String contactPoints = line.getOptionValue('c');
 			String elastic		 = line.getOptionValue('e');
-			String cmdTables	 = line.getOptionValue('t');
+			String cmdTables	 = line.getOptionValue('t');			
 			
 			List<InetSocketAddress> inetAdresses = Transformer.transformToInetAddressList(contactPoints);
 			List<String> tables					 = Transformer.transformToStringList(cmdTables);
@@ -215,25 +214,36 @@ public class Runner
 					{
 						System.out.println("Gathering data");
 					}
-					ResultSet rs = db.select(t.getFields(), t.getName(), "");
-					List<Row> rows = rs.all();
+					ResultSet rs = db.select(t.getFields(), t.getName(), "");										
+					
 					List<Map<String, Object>> data = new ArrayList<>();
-					for (Row r : rows)
+					
+					for (Row row : rs)
 					{
-						Map<String, Object> clone = new HashMap<String, Object>();
-						clone.putAll(map);
-						for (Column c : t.getColumns())
+						if (rs.getAvailableWithoutFetching() == 10000 && !rs.isFullyFetched())
 						{
-							clone.put(c.getName(), r.getObject(c.getName()));
+							rs.fetchMoreResults();
 						}
-						data.add(clone);
+						
+						if (row != null)
+						{
+							Map<String, Object> clone = new HashMap<String, Object>();
+							clone.putAll(map);
+							for (Column c : t.getColumns())
+							{
+								clone.put(c.getName(), row.getObject(c.getName()));
+							}
+							data.add(clone);
+							
+						}
 					}
+					
 					if (debug)
 					{
 						System.out.println("Gathered data");
 						System.out.println("Sending data to Elastic");
 					}
-					node.bulkIndex(table, keyspace, data, 10000);
+					node.bulkIndex(keyspace, table, data, 10000);
 					
 				}
 				else

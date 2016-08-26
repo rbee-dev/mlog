@@ -103,9 +103,6 @@ public class Table
 	{
 		Map<String, Object> map = new HashMap<>();
 		
-		map.put("name", getName());
-		map.put("keyspace", getKeyspace());
-		
 		for (Column c : columns)
 		{
 			map.put(c.getName(), null);

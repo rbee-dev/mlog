@@ -8,8 +8,6 @@ import java.util.List;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.HostDistance;
-import com.datastax.driver.core.PoolingOptions;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -77,16 +75,12 @@ public class Database
 	{
 		try
 		{
-			PoolingOptions poolingOpts = new PoolingOptions();
-			poolingOpts.setCoreConnectionsPerHost(HostDistance.REMOTE, 2);
-			poolingOpts.setMaxConnectionsPerHost(HostDistance.REMOTE, 200);
-			
 			disconnect();
 			
 			this.cluster = Cluster.builder()
 							.addContactPointsWithPorts(this.contactPoints)
-							.withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)
-							.withPoolingOptions(poolingOpts)
+							.withRetryPolicy(DowngradingConsistencyRetryPolicy.INSTANCE)							
+							.withMaxSchemaAgreementWaitSeconds(60)
 							.build();
 			this.session = this.cluster.connect(this.keyspace);
 			
@@ -181,6 +175,7 @@ public class Database
 	{
 		PreparedStatement ps = session.prepare(statement);
 		BoundStatement bs	 = new BoundStatement(ps);
+		bs.setFetchSize(10000);
 		return bs;
 	}
 	
