@@ -34,6 +34,7 @@ public class Runner
 	
 	private CommandLine line;
 	private boolean		debug;
+	private int			sendCount;
 	
 	/** Constructor **/
 	
@@ -46,6 +47,16 @@ public class Runner
 		parseArgs(args);
 	}
 	
+	public void setSendCount(int sendCount)
+	{
+		this.sendCount += sendCount;
+	}
+	
+	public int getSendCount()
+	{
+		return sendCount;
+	}
+
 	/**
 	 * Parses the arguments
 	 * @param args
@@ -242,8 +253,9 @@ public class Runner
 					{
 						System.out.println("Gathered data");
 						System.out.println("Sending data to Elastic");
-					}
-					node.bulkIndex(keyspace, table, data, 10000);
+					}					
+					node.bulkIndex(table, table, data, 10000);
+					setSendCount(data.size());
 					
 				}
 				else
