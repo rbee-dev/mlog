@@ -4,8 +4,9 @@ Provides Monitoring Framework Log for Storing Monitoring Data from Kieker Framew
 # CassandraToElastic
 
 This is a simple command-line based tool to quickly transfer data from Cassandra to Elasticsearch
+
+### How to Use
 ```sh
-usage: CassandraToElastic
  -c,--cassandra <arg>   IPs of the Cassandra cluster
  -d,--debug             Show Debug messages
  -e,--elastic <arg>     IP of the Elastic cluster
