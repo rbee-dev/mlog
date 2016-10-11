@@ -10,6 +10,10 @@ The Cassandra implementation is based on the Datastax Cassandra Driver and for E
 ### Build
 Simply use maven package. With this you build a runnable fat jar.
 
+### Transfer Settings
+The Cassandra Driver is configured to request 10.000 rows at a time.
+The ElasticSearch API is configured to send a bulk request with 10.000 rows at a time, with three concurrent Connections, totaling a rate of 30.000. This is enough for a local ElasticSearch installation.
+
 ### How to Use
 ```sh
  -c,--cassandra <arg>   IPs of the Cassandra cluster
@@ -20,3 +24,6 @@ Simply use maven package. With this you build a runnable fat jar.
  -t,--table <arg>       Table to export to Elastic
 ```
 Currently only data transfer via port 9300 to Elasticsearch is supported. If you have any custom ports, please fork this respository or make a pull request.
+
+### Further Information
+If you are interested in test data please use the following link: https://zenodo.org/record/61227#.V_zkRSQbPNE
