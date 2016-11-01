@@ -36,9 +36,12 @@ public class Transformer
 				String host = combined[0];
 				String port = "9042";
 				
-				if (combined[1] != null)
+				if (combined.length > 1)
 				{
-					port = combined[1];
+					if (combined[1] != null)
+					{
+						port = combined[1];
+					}
 				}
 				
 				InetSocketAddress isa = new InetSocketAddress(host, Integer.parseInt(port));
