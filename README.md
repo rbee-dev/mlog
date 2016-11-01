@@ -25,6 +25,11 @@ The ElasticSearch API is configured to send a bulk request with 10.000 rows at a
  -t,--table <arg>          Table to export to Elastic
 ```
 
+!Important
+Due to the update to Elasticsearch 5 you have to start the jar like this:
+java -DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+-Dlog4j2.disable.jmx=true -jar rbee_cte.jar %CMDAGRGS%
+
 ### Further Information
 If you are interested in test data please use the following link: https://zenodo.org/record/61227#.V_zkRSQbPNE
 
