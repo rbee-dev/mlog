@@ -122,7 +122,7 @@ public class Runner
 		(
 			Option
 			.builder("p")
-			.longOpt("elasticiport")
+			.longOpt("elasticport")
 			.hasArg(true)
 			.desc("Port of the Elastic cluster")
 			.build()
