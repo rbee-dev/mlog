@@ -199,7 +199,7 @@ public class Runner
 			{
 				System.out.println("Cassandra IP: " + line.getOptionValue('c'));
 				System.out.println("Elastic IP: " + line.getOptionValue('e'));
-				System.out.println("Elastic Port" + line.getOptionValue('p'));
+				System.out.println("Elastic Port: " + line.getOptionValue('p'));
 				System.out.println("Tables: " + line.getOptionValue('t'));
 				System.out.println("Keyspace: " + line.getOptionValue('k'));				
 			}
