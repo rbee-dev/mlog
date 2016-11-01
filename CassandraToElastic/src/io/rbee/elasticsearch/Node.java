@@ -13,7 +13,10 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 /**
  * Connection Class which wraps the Elasticsearch API
@@ -132,13 +135,16 @@ public class Node
 	/**
 	 * Connects to the Elastic Cluster
 	 */
+	@SuppressWarnings("resource")
 	public void connect()
 	{
 		if (this.ip != null && !this.ip.isEmpty())
 		{
 			try
-			{				
-				this.client = TransportClient.builder().build().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(this.ip), this.port));
+			{								
+				//this.client = TransportClient.builder().build().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(this.ip), this.port));
+				this.client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(this.ip), this.port));
+				
 			}
 			catch (UnknownHostException e)
 			{			
@@ -158,12 +164,18 @@ public class Node
 	 */
 	public boolean index(String index, String type, String id, Map<String, Object> value) throws Exception
 	{
+		boolean result = false; 
 		if (this.client == null)
 		{
 			throw new Exception("Connection not established, please use connect to a connection");
 		}
 		IndexResponse response = client.prepareIndex(index, type, id).setSource(value).get();
-		return response.isCreated();
+		if (response.getId() != null && !response.getId().isEmpty())
+		{
+			result = true;
+		}
+		return result;
+		//return response.isCreated(); not available in API 5.0 despite being part of the official documentation
 	}
 	
 	/**
