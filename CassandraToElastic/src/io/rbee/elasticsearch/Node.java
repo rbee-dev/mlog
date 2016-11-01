@@ -23,8 +23,11 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 public class Node
 {
 	/** Fields **/
-	private Client client;
-	private String ip;
+	private Client	 client;
+	private String	 ip;
+	private int		 port = ELASTIC_DEFAULT_PORT;
+	
+	public static final int ELASTIC_DEFAULT_PORT = 9300;
 	
 	/** Constructor **/
 	
@@ -43,6 +46,18 @@ public class Node
 	public Node(String ip)
 	{
 		setIp(ip);
+		connect();
+	}
+	
+	/**
+	 * Creates a new instance of this class
+	 * @param ip
+	 * @param port
+	 */
+	public Node(String ip, int port)
+	{
+		setIp(ip);
+		setPort(port);
 		connect();
 	}
 	
@@ -96,6 +111,11 @@ public class Node
 	{
 		this.ip = ip;
 	}
+	
+	public void setPort(int port)
+	{
+		this.port = port;
+	}
 
 	/** Getter **/
 	
@@ -104,16 +124,21 @@ public class Node
 		return ip;
 	}
 	
+	public int getPort()
+	{
+		return port;
+	}
+
 	/**
 	 * Connects to the Elastic Cluster
 	 */
 	public void connect()
 	{
-		if (ip != null && !ip.isEmpty())
+		if (this.ip != null && !this.ip.isEmpty())
 		{
 			try
-			{
-				this.client = TransportClient.builder().build().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(ip), 9300));
+			{				
+				this.client = TransportClient.builder().build().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(this.ip), this.port));
 			}
 			catch (UnknownHostException e)
 			{			
@@ -133,7 +158,7 @@ public class Node
 	 */
 	public boolean index(String index, String type, String id, Map<String, Object> value) throws Exception
 	{
-		if (client == null)
+		if (this.client == null)
 		{
 			throw new Exception("Connection not established, please use connect to a connection");
 		}
@@ -151,7 +176,7 @@ public class Node
 	 */
 	public void bulkIndex(String index, String type, List<Map<String,Object>> data, int bulkSize) throws Exception
 	{
-		if (client == null)
+		if (this.client == null)
 		{
 			throw new Exception("Connection not established, please use connect to a connection");
 		}
@@ -174,7 +199,7 @@ public class Node
 	 */
 	public void bulkIndex(String index, String type, List<Map<String,Object>> data) throws Exception
 	{
-		if (client == null)
+		if (this.client == null)
 		{
 			throw new Exception("Connection not established, please use connect to a connection");
 		}
@@ -193,9 +218,9 @@ public class Node
 	 */
 	public void close()
 	{
-		if (client != null)
+		if (this.client != null)
 		{
-			client.close();
+			this.client.close();
 		}
 	}
 }

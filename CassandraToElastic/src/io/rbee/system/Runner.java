@@ -117,6 +117,18 @@ public class Runner
 			.build()
 		);
 		
+		// Elastic Cluster Port
+		opts.addOption
+		(
+			Option
+			.builder("p")
+			.longOpt("elasticiport")
+			.hasArg(true)
+			.desc("Port of the Elastic cluster")
+			.build()
+		);
+		
+		
 		// Table
 		opts.addOption
 		(
@@ -187,14 +199,22 @@ public class Runner
 			{
 				System.out.println("Cassandra IP: " + line.getOptionValue('c'));
 				System.out.println("Elastic IP: " + line.getOptionValue('e'));
+				System.out.println("Elastic Port" + line.getOptionValue('p'));
 				System.out.println("Tables: " + line.getOptionValue('t'));
-				System.out.println("Keyspace: " + line.getOptionValue('k'));
+				System.out.println("Keyspace: " + line.getOptionValue('k'));				
 			}
 			
 			String keyspace		 = line.getOptionValue('k');			
 			String contactPoints = line.getOptionValue('c');
 			String elastic		 = line.getOptionValue('e');
 			String cmdTables	 = line.getOptionValue('t');			
+			String elasticPort	 = line.getOptionValue('p');
+			int port			 = Node.ELASTIC_DEFAULT_PORT;
+			if (elasticPort != null && !elasticPort.isEmpty())
+			{
+				port = Integer.parseInt(elasticPort);
+			}
+			
 			
 			List<InetSocketAddress> inetAdresses = Transformer.transformToInetAddressList(contactPoints);
 			List<String> tables					 = Transformer.transformToStringList(cmdTables);
@@ -204,7 +224,7 @@ public class Runner
 			{
 				System.out.println("Connection to Cassandra Cluster established");
 			}
-			Node node = new Node(elastic);
+			Node node = new Node(elastic, port);
 			if (debug)
 			{
 				System.out.println("Connection to Elastic Cluster established");
